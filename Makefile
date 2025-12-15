@@ -1,11 +1,8 @@
-# Makefile for GreyHack Customizable Output projects
+# Makefile for GreyHack Customizable Output
 
 # Variables
 DOTNET = dotnet
-SOLUTION_DIR = .
-BEPINEX5_DIR = bepinex5
-BEPINEX6_DIR = bepinex6
-BUILD_CONFIG = Release
+SRC_DIR = src
 
 # Default target
 .PHONY: all
@@ -14,69 +11,61 @@ all: build-bepinex5 build-bepinex6
 # Build BepInEx 5 project
 .PHONY: build-bepinex5
 build-bepinex5:
-	@echo "Building BepInEx 5 project..."
-	cd $(BEPINEX5_DIR) && $(DOTNET) build --configuration $(BUILD_CONFIG)
+	@echo "Building for BepInEx 5..."
+	cd $(SRC_DIR) && $(DOTNET) build --configuration Release-BepInEx5
 
 # Build BepInEx 6 project
 .PHONY: build-bepinex6
 build-bepinex6:
-	@echo "Building BepInEx 6 project..."
-	cd $(BEPINEX6_DIR) && $(DOTNET) build --configuration $(BUILD_CONFIG)
+	@echo "Building for BepInEx 6..."
+	cd $(SRC_DIR) && $(DOTNET) build --configuration Release-BepInEx6
 
-# Clean both projects
+# Clean project
 .PHONY: clean
-clean: clean-bepinex5 clean-bepinex6
+clean:
+	@echo "Cleaning project..."
+	cd $(SRC_DIR) && $(DOTNET) clean
 
-.PHONY: clean-bepinex5
-clean-bepinex5:
-	@echo "Cleaning BepInEx 5 project..."
-	cd $(BEPINEX5_DIR) && $(DOTNET) clean
-
-.PHONY: clean-bepinex6
-clean-bepinex6:
-	@echo "Cleaning BepInEx 6 project..."
-	cd $(BEPINEX6_DIR) && $(DOTNET) clean
-
-# Restore packages for both projects
+# Restore packages
 .PHONY: restore
-restore: restore-bepinex5 restore-bepinex6
+restore:
+	@echo "Restoring packages..."
+	cd $(SRC_DIR) && $(DOTNET) restore
 
-.PHONY: restore-bepinex5
-restore-bepinex5:
-	@echo "Restoring packages for BepInEx 5 project..."
-	cd $(BEPINEX5_DIR) && $(DOTNET) restore
-
-.PHONY: restore-bepinex6
-restore-bepinex6:
-	@echo "Restoring packages for BepInEx 6 project..."
-	cd $(BEPINEX6_DIR) && $(DOTNET) restore
-
-# Rebuild both projects (clean + build)
+# Rebuild both configurations (clean + build)
 .PHONY: rebuild
 rebuild: clean all
 
 # Debug builds
 .PHONY: debug
-debug: BUILD_CONFIG = Debug
-debug: all
+debug: debug-bepinex5 debug-bepinex6
+
+.PHONY: debug-bepinex5
+debug-bepinex5:
+	@echo "Building for BepInEx 5 (Debug)..."
+	cd $(SRC_DIR) && $(DOTNET) build --configuration Debug-BepInEx5
+
+.PHONY: debug-bepinex6
+debug-bepinex6:
+	@echo "Building for BepInEx 6 (Debug)..."
+	cd $(SRC_DIR) && $(DOTNET) build --configuration Debug-BepInEx6
 
 # Release builds (default)
 .PHONY: release
-release: BUILD_CONFIG = Release
 release: all
 
 # Help target
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  all           - Build both BepInEx 5 and 6 projects (default)"
-	@echo "  build-bepinex5 - Build only BepInEx 5 project"
-	@echo "  build-bepinex6 - Build only BepInEx 6 project"
-	@echo "  clean         - Clean both projects"
-	@echo "  clean-bepinex5 - Clean only BepInEx 5 project"
-	@echo "  clean-bepinex6 - Clean only BepInEx 6 project"
-	@echo "  restore       - Restore packages for both projects"
-	@echo "  rebuild       - Clean and build both projects"
-	@echo "  debug         - Build both projects in Debug configuration"
-	@echo "  release       - Build both projects in Release configuration"
-	@echo "  help          - Show this help message"
+	@echo "  all            - Build for both BepInEx 5 and 6 (Release, default)"
+	@echo "  build-bepinex5 - Build only for BepInEx 5 (Release)"
+	@echo "  build-bepinex6 - Build only for BepInEx 6 (Release)"
+	@echo "  clean          - Clean project"
+	@echo "  restore        - Restore packages"
+	@echo "  rebuild        - Clean and build both configurations"
+	@echo "  debug          - Build both configurations in Debug mode"
+	@echo "  debug-bepinex5 - Build only for BepInEx 5 (Debug)"
+	@echo "  debug-bepinex6 - Build only for BepInEx 6 (Debug)"
+	@echo "  release        - Build both configurations in Release mode"
+	@echo "  help           - Show this help message"
